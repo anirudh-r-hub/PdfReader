@@ -10,7 +10,10 @@ import android.os.ParcelFileDescriptor;
 import android.speech.tts.TextToSpeech;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -33,8 +36,9 @@ public class Book1 extends AppCompatActivity {
     PDFView book1;
     private TextToSpeech text_to_speech;
     private static final String COLON = ":";
-    boolean speak,stop;
+    boolean speak,stop,fullscr;
     EditText edit_goto;
+    LinearLayout l1;
 
     Uri filePath;
     @Override
@@ -43,10 +47,40 @@ public class Book1 extends AppCompatActivity {
         setContentView(R.layout.activity_book1);
 
         edit_goto = (EditText) findViewById(R.id.edit_goto);
+        l1 = (LinearLayout) findViewById(R.id.l1);
         book1 = (PDFView) findViewById(R.id.book1); // creating a view which will display the pdf
         final FloatingActionButton fab = findViewById(R.id.fab);
+        final FloatingActionButton full_screen = findViewById(R.id.fab_fullscreen);
         speak = true;
         stop = false;
+        fullscr = false;
+
+        full_screen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            if(!fullscr){
+                //hide views
+                l1.setVisibility(LinearLayout.GONE);
+                //make it full screen
+                //change icon
+                full_screen.setImageResource(R.drawable.ic_fullscreen_exit_black_24dp);
+                fullscr = true;
+
+
+            } else
+            {
+                //show views
+                l1.setVisibility(LinearLayout.VISIBLE);
+                //change icon
+                full_screen.setImageResource(R.drawable.ic_fullscreen_black_24dp);
+
+                //change fullscr status
+                fullscr = false;
+            }
+
+            }
+        });
 
         //book1.fromAsset("book1.pdf").load();
 
@@ -125,12 +159,13 @@ public class Book1 extends AppCompatActivity {
             File file=new File(filePath.toString());
             PdfReader pdfReader = new PdfReader(filePath.toString());
 
-            //for(int i=1;i<=pdfReader.getNumberOfPages();i++)
-            stringParser += PdfTextExtractor.getTextFromPage(pdfReader, page_no).trim();
+            //for(int i=page_no;i<=pdfReader.getNumberOfPages();i++) {
+                    stringParser += PdfTextExtractor.getTextFromPage(pdfReader, page_no).trim();
+                    //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
+                    speak("" + stringParser);
+            //}
             pdfReader.close();
             //outputTextView.setText(stringParser);
-            Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
-            speak(""+stringParser);
 
 
             //Toast.makeText(this,stringParser,Toast.LENGTH_LONG).show();
