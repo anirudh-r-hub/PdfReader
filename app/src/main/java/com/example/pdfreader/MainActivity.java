@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         //startActivityForResult(Intent.createChooser(filePicker_intent,"Choose PDF"), 1);
         new MaterialFilePicker()
                 .withActivity(this)
+                .withRootPath("/storage/")
                 .withRequestCode(1000)
                 .withHiddenFiles(true) // Show hidden files and folders
                 .start();
