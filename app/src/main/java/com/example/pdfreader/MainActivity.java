@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.github.barteksc.pdfviewer.PDFView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.itextpdf.text.pdf.PdfReader;
@@ -28,6 +29,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -48,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+
+        /*FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
       //          speechRecognizer.startListening(intent);
             }
 
-        });
+        });*/
         //initialise_text_to_speech();
-        //initialise_speech_recognizer();
+        //initialise_speech_recognizer();*/
     }
 
     //##########################FILE PICKER BUTTON#################################################################3
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         //startActivityForResult(Intent.createChooser(filePicker_intent,"Choose PDF"), 1);
         new MaterialFilePicker()
                 .withActivity(this)
+                .withRootPath("/storage/")
                 .withRequestCode(1000)
                 .withHiddenFiles(true) // Show hidden files and folders
                 .start();
