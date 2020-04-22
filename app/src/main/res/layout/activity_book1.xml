@@ -7,16 +7,6 @@
     android:orientation="horizontal"
     tools:context=".Book1">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_fullscreen"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="0dp"
-        android:backgroundTint="@android:color/white"
-        android:foreground="@drawable/ic_fullscreen_black_24dp"
-        android:foregroundGravity="center"
-        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -65,8 +55,6 @@
             android:id="@+id/btn_next"
             android:background="@drawable/ic_navigate_next_black_24dp"
             android:onClick="nextpage"
-
-
             />
         <Button
             android:layout_width="wrap_content"
@@ -90,6 +78,30 @@
         android:id="@+id/book1"/>
 
     </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_fullscreen"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        android:backgroundTint="@android:color/white"
+
+        android:foreground="@drawable/ic_fullscreen_black_24dp"
+        android:foregroundGravity="center"
+        />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/night_mode"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="16dp"
+        android:backgroundTint="@android:color/white"
+
+        android:foreground="@drawable/ic_fullscreen_black_24dp"
+        android:foregroundGravity="center"
+        />
+
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
