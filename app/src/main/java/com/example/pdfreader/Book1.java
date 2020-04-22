@@ -1,5 +1,6 @@
 package com.example.pdfreader;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.pdf.PdfRenderer;
@@ -11,6 +12,9 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -39,7 +43,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Book1 extends AppCompatActivity {
+public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsDialogListener {
 
     PDFView book1;
     private TextToSpeech text_to_speech;
@@ -53,6 +57,8 @@ public class Book1 extends AppCompatActivity {
     FloatingActionButton fab,night_mode;
     HashMap<String, String> map = new HashMap<String, String>();
     Uri filePath;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +121,7 @@ public class Book1 extends AppCompatActivity {
                     l1.setVisibility(LinearLayout.GONE);
                     //make it full screen
                     //change icon
-                    full_screen.setImageResource(R.drawable.ic_fullscreen_exit_black_24dp);
+                    full_screen.setForeground(getResources().getDrawable(R.drawable.ic_fullscreen_exit_black_24dp,null));
                     fullscr = true;
 
 
@@ -124,8 +130,8 @@ public class Book1 extends AppCompatActivity {
                     //show views
                     l1.setVisibility(LinearLayout.VISIBLE);
                     //change icon
-                    full_screen.setImageResource(R.drawable.ic_fullscreen_black_24dp);
-
+                    //full_screen.setImageResource(R.drawable.ic_fullscreen_black_24dp);
+                    full_screen.setForeground(getResources().getDrawable(R.drawable.ic_fullscreen_black_24dp,null));
                     //change fullscr status
                     fullscr = false;
                 }
@@ -139,13 +145,13 @@ public class Book1 extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"fhgjhg",Toast.LENGTH_LONG).show();
                 if(nightmode_state==false)
                 {
-                    book1.setNightMode(true);
+                    //book1.setNightMode(true);
                     nightmode_state=true;
                     
                 }
                 else
                 {
-                    book1.setNightMode(false);
+                    //book1.setNightMode(false);
                     nightmode_state=false;
                 }
             }
@@ -225,6 +231,39 @@ public class Book1 extends AppCompatActivity {
     }
 //##############################################################################################################3
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_LONG).show();
+                openSettingsDialog();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void openSettingsDialog() {
+        SettingsDialog settingsDialog = new SettingsDialog();
+        settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
+
+    }
+
+
+    @Override
+    public void apply(float pitch, float speed) {
+        text_to_speech.setPitch(pitch);
+        text_to_speech.setSpeechRate(speed);
+    }
 
     private void initialise_text_to_speech() {
         text_to_speech=new TextToSpeech(Book1.this, new TextToSpeech.OnInitListener() {
