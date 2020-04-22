@@ -12,8 +12,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -30,15 +32,19 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Book1 extends AppCompatActivity {
 
     PDFView book1;
     private TextToSpeech text_to_speech;
     private static final String COLON = ":";
-    boolean speak,stop,fullscr;
+    boolean speak,stop,fullscr, nightmode_state;
     EditText edit_goto;
+    TextView text_totalpages;
+    int number_of_pages;
     LinearLayout l1;
+    Button night_mode;
 
     Uri filePath;
     @Override
@@ -46,6 +52,8 @@ public class Book1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book1);
 
+        //night_mode = (Button)findViewById(R.id.btn_nightmode);
+        text_totalpages = (TextView) findViewById(R.id.text_noofpages);
         edit_goto = (EditText) findViewById(R.id.edit_goto);
         l1 = (LinearLayout) findViewById(R.id.l1);
         book1 = (PDFView) findViewById(R.id.book1); // creating a view which will display the pdf
@@ -54,7 +62,11 @@ public class Book1 extends AppCompatActivity {
         speak = true;
         stop = false;
         fullscr = false;
+        nightmode_state = false;
 
+
+
+        //handle the hiding toolbar button
         full_screen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,15 +100,56 @@ public class Book1 extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         filePath = Uri.parse(bundle.getString("filePath")); //gving a filepath
 
-        File file=new File(filePath.getPath());
+        final File file=new File(filePath.getPath());
         book1.fromFile(file)
             .enableDoubletap(true)
                 .scrollHandle(new DefaultScrollHandle(this, true))
+
                 .load(); // put the pdf in the pdf view
 
         Toast.makeText(Book1.this, ""+filePath.toString(), Toast.LENGTH_LONG).show();
         initialise_text_to_speech();
 
+        // find the number of pages
+        PdfReader pdfReader = null;
+        try {
+            pdfReader = new PdfReader(filePath.toString());
+            number_of_pages = pdfReader.getNumberOfPages();
+            pdfReader.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        text_totalpages.setText("/ "+number_of_pages);
+
+
+        //handle the night mode
+        /*night_mode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!nightmode_state) {
+                    //set night mode
+                    //change icon
+                    night_mode.setBackground(getResources().getDrawable(R.drawable.ic_night_4_black_24dp,null));
+                    //change nightmode_state
+                    nightmode_state = true;
+                } else {
+
+                    book1.fromFile(file)
+                            .enableDoubletap(true)
+                            .scrollHandle(new DefaultScrollHandle(Book1.this, true))
+                            .load(); // put the pdf in the pdf view
+
+                    night_mode.setBackground(getResources().getDrawable(R.drawable.day_5_black_24dp,null));
+                    //change nightmode_state
+                    nightmode_state = false;
+                }
+            }
+        });*/
+
+        //speech to text button
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,7 +168,7 @@ public class Book1 extends AppCompatActivity {
                         stop = true;
                     } else if (stop) {
                         text_to_speech.stop();
-                        fab.setImageResource(R.drawable.ic_add_circle);
+                        fab.setImageResource(R.drawable.ic_speaker_phone_black_24dp);
                         stop = false;
                         speak = true;
                     }
@@ -138,7 +191,7 @@ public class Book1 extends AppCompatActivity {
                 }
                 else
                 {
-                    text_to_speech.setLanguage(Locale.US);
+                    text_to_speech.setLanguage(Locale.ENGLISH);
                     //read_pdf_file();
 
                 }
@@ -159,10 +212,15 @@ public class Book1 extends AppCompatActivity {
             File file=new File(filePath.toString());
             PdfReader pdfReader = new PdfReader(filePath.toString());
 
+
             //for(int i=page_no;i<=pdfReader.getNumberOfPages();i++) {
-                    stringParser += PdfTextExtractor.getTextFromPage(pdfReader, page_no).trim();
+
+                    // access the resource protected by this lock
+                    stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).trim();
                     //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
                     speak("" + stringParser);
+
+
             //}
             pdfReader.close();
             //outputTextView.setText(stringParser);
@@ -181,12 +239,58 @@ public class Book1 extends AppCompatActivity {
         text_to_speech.stop();
     }
 
+    @Override
+    protected void onDestroy() {
+
+        if(text_to_speech != null) {
+            text_to_speech.stop();
+            text_to_speech.shutdown();
+        }
+        super.onDestroy();
+    }
+
     public void gotopage(View view) {
         if(edit_goto.getText().toString().equals(""))
             edit_goto.requestFocus();
         else {
             int entered_page = Integer.parseInt(edit_goto.getText().toString());
+            if(entered_page > number_of_pages)
+                entered_page = number_of_pages;
             book1.jumpTo(entered_page-1);
+        }
+    }
+
+    public void nextpage(View view) {
+        if(edit_goto.getText().toString().equals(""))
+            book1.jumpTo(1);
+        else{
+            int entered_page = Integer.parseInt(edit_goto.getText().toString());
+            if(entered_page == number_of_pages) {
+                book1.jumpTo(0);
+                edit_goto.setText(new Integer( 1).toString());
+            }
+            else {
+                book1.jumpTo(entered_page);
+                edit_goto.setText(new Integer(entered_page + 1).toString());
+            }
+        }
+
+
+    }
+
+    public void prevpage(View view) {
+        if(edit_goto.getText().toString().equals(""))
+            book1.jumpTo(1);
+        else{
+            int entered_page = Integer.parseInt(edit_goto.getText().toString());
+            if(entered_page - 1 == 0) {
+                book1.jumpTo(number_of_pages - 1);
+                edit_goto.setText(new Integer( number_of_pages).toString());
+            }
+            else {
+                book1.jumpTo(entered_page - 2);
+                edit_goto.setText(new Integer( entered_page - 1).toString());
+            }
         }
     }
 }
