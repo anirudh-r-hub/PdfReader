@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.speech.tts.TextToSpeech;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnTapListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.github.barteksc.pdfviewer.source.DocumentSource;
@@ -65,35 +68,7 @@ public class Book1 extends AppCompatActivity {
         nightmode_state = false;
 
 
-
-        //handle the hiding toolbar button
-        full_screen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            if(!fullscr){
-                //hide views
-                l1.setVisibility(LinearLayout.GONE);
-                //make it full screen
-                //change icon
-                full_screen.setImageResource(R.drawable.ic_fullscreen_exit_black_24dp);
-                fullscr = true;
-
-
-            } else
-            {
-                //show views
-                l1.setVisibility(LinearLayout.VISIBLE);
-                //change icon
-                full_screen.setImageResource(R.drawable.ic_fullscreen_black_24dp);
-
-                //change fullscr status
-                fullscr = false;
-            }
-
-            }
-        });
-
+        //****************open the file and initialize tts**********************************************
         //book1.fromAsset("book1.pdf").load();
 
         //Get the bundle
@@ -104,13 +79,46 @@ public class Book1 extends AppCompatActivity {
         book1.fromFile(file)
             .enableDoubletap(true)
                 .scrollHandle(new DefaultScrollHandle(this, true))
-
+                .onPageChange(new OnPageChangeListener() {
+                    @Override
+                    public void onPageChanged(int page, int pageCount) {
+                        edit_goto.setText(new Integer(page+1).toString());
+                    }
+                })
                 .load(); // put the pdf in the pdf view
 
         Toast.makeText(Book1.this, ""+filePath.toString(), Toast.LENGTH_LONG).show();
         initialise_text_to_speech();
 
-        // find the number of pages
+        //*****************handle the hiding toolbar button****************************************
+        full_screen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!fullscr){
+                    //hide views
+                    l1.setVisibility(LinearLayout.GONE);
+                    //make it full screen
+                    //change icon
+                    full_screen.setImageResource(R.drawable.ic_fullscreen_exit_black_24dp);
+                    fullscr = true;
+
+
+                } else
+                {
+                    //show views
+                    l1.setVisibility(LinearLayout.VISIBLE);
+                    //change icon
+                    full_screen.setImageResource(R.drawable.ic_fullscreen_black_24dp);
+
+                    //change fullscr status
+                    fullscr = false;
+                }
+
+            }
+        });
+
+        //********************find the number of pages*********************************************
         PdfReader pdfReader = null;
         try {
             pdfReader = new PdfReader(filePath.toString());
@@ -125,7 +133,7 @@ public class Book1 extends AppCompatActivity {
         text_totalpages.setText("/ "+number_of_pages);
 
 
-        //handle the night mode
+        //*****************************handle the night mode***************************************
         /*night_mode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,7 +157,7 @@ public class Book1 extends AppCompatActivity {
             }
         });*/
 
-        //speech to text button
+        //*******************************speech to text button*************************************************
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -175,8 +183,10 @@ public class Book1 extends AppCompatActivity {
                 }
             }
         });
-    }
 
+
+    }
+//##############################################################################################################3
 
 
     private void initialise_text_to_speech() {
@@ -249,6 +259,8 @@ public class Book1 extends AppCompatActivity {
         super.onDestroy();
     }
 
+    //#########################################################################################################3
+
     public void gotopage(View view) {
         if(edit_goto.getText().toString().equals(""))
             edit_goto.requestFocus();
@@ -293,4 +305,7 @@ public class Book1 extends AppCompatActivity {
             }
         }
     }
+
+    //#######################################################################################################
 }
+//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
