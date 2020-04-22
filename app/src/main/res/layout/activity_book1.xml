@@ -9,14 +9,13 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_fullscreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="top|end"
-        android:layout_margin="0dp"
-        app:maxImageSize="24dp"
+        android:layout_marginTop="0dp"
         android:backgroundTint="@android:color/white"
-        app:srcCompat="@drawable/ic_fullscreen_black_24dp"
-
+        android:foreground="@drawable/ic_fullscreen_black_24dp"
+        android:foregroundGravity="center"
         />
 
     <LinearLayout
@@ -36,19 +35,52 @@
             android:text="Go to"
             />
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:hint="Page no."
+            android:textSize="15sp"
             android:id="@+id/edit_goto"
+            android:textAlignment="center"
             android:inputType="number"
+            android:text="1"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_noofpages"
+            android:textSize="15sp"
+            android:text="/ ---"/>
+
+        <Button
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_prev"
+            android:background="@drawable/ic_navigate_before_black_24dp"
+            android:onClick="prevpage"
             />
 
+        <Button
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_next"
+            android:background="@drawable/ic_navigate_next_black_24dp"
+            android:onClick="nextpage"
+
+
+            />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btn_goto"
             android:text="Go to"
             android:onClick="gotopage"/>
+
+        <!--<Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_nightmode"
+            />-->
+
 
     </LinearLayout>
 
@@ -65,9 +97,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        app:maxImageSize="68dp"
-        android:backgroundTint="@android:color/white"
-        app:srcCompat="@drawable/ic_add_circle"
+        app:maxImageSize="50dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        app:srcCompat="@drawable/ic_speaker_phone_black_24dp"
 
         />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
