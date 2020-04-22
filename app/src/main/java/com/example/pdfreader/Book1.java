@@ -141,6 +141,7 @@ public class Book1 extends AppCompatActivity {
                 {
                     book1.setNightMode(true);
                     nightmode_state=true;
+                    
                 }
                 else
                 {
