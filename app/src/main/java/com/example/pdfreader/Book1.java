@@ -57,7 +57,8 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     FloatingActionButton fab,night_mode;
     HashMap<String, String> map = new HashMap<String, String>();
     Uri filePath;
-
+    float this_pitch, this_speed;
+    int pitch_progress, speed_progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         stop = false;
         fullscr = false;
         nightmode_state = false;
+        this_pitch = this_speed = 0.5f;
 
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
 
@@ -252,16 +254,27 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     }
 
     public void openSettingsDialog() {
-        SettingsDialog settingsDialog = new SettingsDialog();
+        SettingsDialog settingsDialog = new SettingsDialog(pitch_progress, speed_progress);
         settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
 
     }
 
 
     @Override
-    public void apply(float pitch, float speed) {
-        text_to_speech.setPitch(pitch);
-        text_to_speech.setSpeechRate(speed);
+    public void apply(int pitch, int speed) {
+        pitch_progress = pitch;
+        speed_progress = speed;
+
+        //convert progrees into actual value
+        this_pitch = (float) pitch_progress / 50;
+        if (this_pitch < 0.1) this_pitch = 0.1f;
+        this_speed = (float) speed_progress / 50;
+        if (this_speed < 0.1) this_speed = 0.1f;
+
+        text_to_speech.setPitch(this_pitch);
+        text_to_speech.setSpeechRate(this_speed);
+
+
     }
 
     private void initialise_text_to_speech() {
