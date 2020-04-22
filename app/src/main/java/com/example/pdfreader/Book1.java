@@ -102,8 +102,11 @@ public class Book1 extends AppCompatActivity {
 
         final File file=new File(filePath.getPath());
         book1.fromFile(file)
+        .nightMode(true)
             .enableDoubletap(true)
+
                 .scrollHandle(new DefaultScrollHandle(this, true))
+
 
                 .load(); // put the pdf in the pdf view
 
