@@ -57,6 +57,8 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     FloatingActionButton fab,night_mode;
     HashMap<String, String> map = new HashMap<String, String>();
     Uri filePath;
+    int read_line=0;
+    String[]stringParser;
 
 
     @Override
@@ -90,11 +92,12 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         Bundle bundle = getIntent().getExtras();
         filePath = Uri.parse(bundle.getString("filePath")); //gving a filepath
 
+
+
         final File file=new File(filePath.getPath());
         book1.fromFile(file)
-
-            .enableDoubletap(true)
-                .enableSwipe(false)
+                .enableDoubletap(true)
+                .enableSwipe(true)
                 .scrollHandle(new DefaultScrollHandle(this, true))
 
 
@@ -208,7 +211,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
                 } else {
                     int entered_page = Integer.parseInt(edit_goto.getText().toString());
-
                     if (speak) {
 
                         fab.setImageResource(R.drawable.ic_pause);
@@ -220,6 +222,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                         fab.setImageResource(R.drawable.ic_speaker_phone_black_24dp);
                         stop = false;
                         speak = true;
+                        //Toast.makeText(getApplicationContext(),"read_word: "+read_line,Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -292,10 +295,12 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                                 runOnUiThread(new Runnable() {
 
                                     public void run() {
-                                        Toast.makeText(getApplicationContext(),"bye bye",Toast.LENGTH_LONG).show();
                                         btn_next.performClick();
                                         speak=true;
                                         stop=false;
+                                        read_line=0;
+                                        Toast.makeText(getApplicationContext(),"read_word: "+read_line,Toast.LENGTH_LONG).show();
+
                                         fab.performClick();
                                     }
                                 });
@@ -319,12 +324,15 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     {
         if(Build.VERSION.SDK_INT>=21)
         {
-            text_to_speech.speak(message,TextToSpeech.QUEUE_ADD,null,map.toString());
+            if(read_line==stringParser.length-1)
+                text_to_speech.speak(message,TextToSpeech.QUEUE_ADD,null,map.toString());
+
+            else
+                text_to_speech.speak(message,TextToSpeech.QUEUE_ADD,null,null);
         }
     }
     public void read_pdf_file(int page_no) {
         try {
-            String stringParser="";
             File file=new File(filePath.toString());
             PdfReader pdfReader = new PdfReader(filePath.toString());
 
@@ -332,9 +340,15 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             //for(int i=page_no;i<=pdfReader.getNumberOfPages();i++) {
 
                     // access the resource protected by this lock
-                    stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).trim();
-                    //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
-                    speak("" + stringParser);
+            stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).split("\n");
+
+
+            for(int i=read_line;i<stringParser.length;i++) {
+                read_line=i;
+                speak(stringParser[i]);
+                //Toast.makeText(getApplicationContext(),"wordno"+i+": "+stringParser[i],Toast.LENGTH_LONG).show();
+            }
+
 
 
             //}
@@ -349,11 +363,11 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         }
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
         text_to_speech.stop();
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
