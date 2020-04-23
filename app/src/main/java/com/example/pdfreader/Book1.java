@@ -56,6 +56,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     int number_of_pages;
     LinearLayout l1;
     Button btn_next,btn_prev,btn_goto;
+    boolean stop_session_enabled;
     FloatingActionButton fab,stop_session;
     HashMap<String, String> map = new HashMap<String, String>();
     HashMap<String,String>map1=new HashMap<String, String>();
@@ -81,6 +82,8 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         btn_prev=(Button)findViewById(R.id.btn_prev);
         btn_goto=(Button)findViewById(R.id.btn_goto);
 
+        stop_session_enabled = false;
+        stop_session.setEnabled(false);
         book1 = (PDFView) findViewById(R.id.book1); // creating a view which will display the pdf
         fab = findViewById(R.id.fab);
         final FloatingActionButton full_screen = findViewById(R.id.fab_fullscreen);
@@ -197,32 +200,62 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             @Override
             public void onClick(View view) {
 
-                if(edit_goto.getText().toString().equals("")) {
-                    edit_goto.requestFocus();
+                if (stop_session_enabled == false) {
 
-                } else {
-                    int entered_page = Integer.parseInt(edit_goto.getText().toString());
+                    stop_session.setEnabled(true);
+                    stop_session_enabled = true;
+                    stop_session.setForeground(getResources().getDrawable(R.drawable.ic_stop_black,null));
 
-                    if (speak) {
+                    if (edit_goto.getText().toString().equals("")) {
+                        edit_goto.requestFocus();
+
+                    } else {
+                        int entered_page = Integer.parseInt(edit_goto.getText().toString());
 
                         fab.setImageResource(R.drawable.ic_pause);
                         read_pdf_file(entered_page);
                         speak = false;
                         stop = true;
                         btn_next.setEnabled(false);
+                        btn_next.setForeground(getResources().getDrawable(R.drawable.ic_navigate_next_disabled,null));
+
                         btn_prev.setEnabled(false);
+                        btn_prev.setForeground(getResources().getDrawable(R.drawable.ic_navigate_before_disabled,null));
                         btn_goto.setEnabled(false);
                         edit_goto.setEnabled(false);
                         book1.setSwipeEnabled(false);
-
-
-                    } else if (stop) {
-                        text_to_speech.stop();
-                        fab.setImageResource(R.drawable.ic_speaker_phone_black_24dp);
-                        stop = false;
-                        speak = true;
-
                     }
+
+
+                } else {
+                    if (edit_goto.getText().toString().equals("")) {
+                        edit_goto.requestFocus();
+
+                    } else {
+                        int entered_page = Integer.parseInt(edit_goto.getText().toString());
+
+                        if (speak) {
+
+                            fab.setImageResource(R.drawable.ic_pause);
+                            read_pdf_file(entered_page);
+                            speak = false;
+                            stop = true;
+                            /*btn_next.setEnabled(false);
+                            btn_prev.setEnabled(false);
+                            btn_goto.setEnabled(false);
+                            edit_goto.setEnabled(false);
+                            book1.setSwipeEnabled(false);*/
+
+
+                        } else if (stop) {
+                            text_to_speech.stop();
+                            fab.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+                            stop = false;
+                            speak = true;
+
+                        }
+                    }
+
                 }
             }
         });
@@ -232,15 +265,25 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             public void onClick(View v) {
                 speak=false;
                 stop=true;
-                fab.performClick();
+                text_to_speech.stop();
+                fab.setImageResource(R.drawable.ic_speaker_phone_black_24dp);
+
+                //fab.performClick();
                 //btn_next.setEnabled(false);
 
                 read_line=0;
-                btn_next.setEnabled(true);
-                btn_prev.setEnabled(true);
+                btn_next.setEnabled(false);
+                btn_next.setForeground(getResources().getDrawable(R.drawable.ic_navigate_next_black_24dp,null));
+
+                btn_prev.setEnabled(false);
+                btn_prev.setForeground(getResources().getDrawable(R.drawable.ic_navigate_before_black_24dp,null));
                 btn_goto.setEnabled(true);
                 edit_goto.setEnabled(true);
                 book1.setSwipeEnabled(true);
+
+                stop_session.setEnabled(false);
+                stop_session.setForeground(getResources().getDrawable(R.drawable.ic_stop_black_disabled_24dp,null));
+                stop_session_enabled = false;
 
 
             }
