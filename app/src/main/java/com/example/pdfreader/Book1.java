@@ -411,7 +411,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         }
     }
 
-    
+
 
     @Override
     protected void onDestroy() {
