@@ -48,13 +48,13 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     PDFView book1;
     private TextToSpeech text_to_speech;
     private static final String COLON = ":";
-    boolean speak,stop,fullscr, nightmode_state;
+    boolean speak,stop,fullscr;
     EditText edit_goto;
     TextView text_totalpages;
     int number_of_pages;
     LinearLayout l1;
-    Button btn_next;
-    FloatingActionButton fab,night_mode;
+    Button btn_next,btn_prev,btn_goto;
+    FloatingActionButton fab,stop_session;
     HashMap<String, String> map = new HashMap<String, String>();
     HashMap<String,String>map1=new HashMap<String, String>();
     Uri filePath;
@@ -69,17 +69,19 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
         //night_mode = (Button)findViewById(R.id.btn_nightmode);
         text_totalpages = (TextView)findViewById(R.id.text_noofpages);
-        night_mode=findViewById(R.id.night_mode);
+        stop_session=findViewById(R.id.stop_session);
         edit_goto = (EditText) findViewById(R.id.edit_goto);
         l1 = (LinearLayout) findViewById(R.id.l1);
         btn_next=(Button)findViewById(R.id.btn_next);
+        btn_prev=(Button)findViewById(R.id.btn_prev);
+        btn_goto=(Button)findViewById(R.id.btn_goto);
+
         book1 = (PDFView) findViewById(R.id.book1); // creating a view which will display the pdf
          fab = findViewById(R.id.fab);
         final FloatingActionButton full_screen = findViewById(R.id.fab_fullscreen);
         speak = true;
         stop = false;
         fullscr = false;
-        nightmode_state = false;
         this_pitch = this_speed = 0.5f;
 
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
@@ -99,7 +101,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         book1.fromFile(file)
 
             .enableDoubletap(true)
-                .enableSwipe(false)
+                .enableSwipe(true)
                 .scrollHandle(new DefaultScrollHandle(this, true))
 
 
@@ -144,22 +146,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             }
         });
 
-        night_mode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"fhgjhg",Toast.LENGTH_LONG).show();
-                if(nightmode_state==false)
-                {
-                    //book1.setNightMode(true);
-                    nightmode_state=true;
-                }
-                else
-                {
-                    //book1.setNightMode(false);
-                    nightmode_state=false;
-                }
-            }
-        });
+
 
 
 
@@ -219,6 +206,13 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                         read_pdf_file(entered_page);
                         speak = false;
                         stop = true;
+                        btn_next.setEnabled(false);
+                        btn_prev.setEnabled(false);
+                        btn_goto.setEnabled(false);
+                        edit_goto.setEnabled(false);
+                        book1.setSwipeEnabled(false);
+
+
                     } else if (stop) {
                         text_to_speech.stop();
                         fab.setImageResource(R.drawable.ic_speaker_phone_black_24dp);
@@ -227,6 +221,25 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
                     }
                 }
+            }
+        });
+
+        stop_session.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                speak=false;
+                stop=true;
+                fab.performClick();
+                //btn_next.setEnabled(false);
+
+                read_line=0;
+                btn_next.setEnabled(true);
+                btn_prev.setEnabled(true);
+                btn_goto.setEnabled(true);
+                edit_goto.setEnabled(true);
+                book1.setSwipeEnabled(true);
+
+
             }
         });
 
@@ -372,9 +385,11 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             PdfReader pdfReader = new PdfReader(filePath.toString());
 
 
+
             //for(int i=page_no;i<=pdfReader.getNumberOfPages();i++) {
 
                     // access the resource protected by this lock
+
                     stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).split("\n");
                     //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
                     if(read_line<stringParser.length)
@@ -396,11 +411,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        text_to_speech.stop();
-    }
+    
 
     @Override
     protected void onDestroy() {

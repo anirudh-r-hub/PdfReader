@@ -90,14 +90,14 @@
         android:foregroundGravity="center"
         />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/night_mode"
+        android:id="@+id/stop_session"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="bottom|center"
         android:layout_margin="16dp"
         android:backgroundTint="@android:color/white"
 
-        android:foreground="@drawable/ic_fullscreen_black_24dp"
+        android:foreground="@drawable/ic_stop_black"
         android:foregroundGravity="center"
         />
 
