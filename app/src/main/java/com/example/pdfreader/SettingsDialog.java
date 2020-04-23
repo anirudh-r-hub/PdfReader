@@ -18,8 +18,16 @@ public class SettingsDialog extends AppCompatDialogFragment {
 
     private SeekBar seekbarPitch;
     private SeekBar seekbarSpeed;
-    float pitch, speed;
+    int pitch, speed, pitch_prev, speed_prev;
     private SettingsDialogListener listener;
+
+
+    SettingsDialog(int pitch, int speed)
+    {
+        pitch_prev = pitch;
+        speed_prev = speed;
+
+    }
 
     @NonNull
     @Override
@@ -30,6 +38,12 @@ public class SettingsDialog extends AppCompatDialogFragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.voicesettings_dialog, null);
+
+        seekbarPitch = view.findViewById(R.id.seek_bar_pitch);
+        seekbarSpeed = view.findViewById(R.id.seek_bar_speed);
+
+        seekbarPitch.setProgress(pitch_prev);
+        seekbarSpeed.setProgress(speed_prev);
 
         builder.setView(view)
                 .setTitle("Voice Settings")
@@ -42,17 +56,15 @@ public class SettingsDialog extends AppCompatDialogFragment {
                 .setPositiveButton("apply", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        pitch = (float) seekbarPitch.getProgress() / 50;
-                        if (pitch < 0.1) pitch = 0.1f;
-                        speed = (float) seekbarSpeed.getProgress() / 50;
-                        if (speed < 0.1) speed = 0.1f;
+
+                        pitch = seekbarPitch.getProgress();
+                        speed = seekbarSpeed.getProgress();
+
+
 
                         listener.apply(pitch, speed);
                     }
                 });
-
-        seekbarPitch = view.findViewById(R.id.seek_bar_pitch);
-        seekbarSpeed = view.findViewById(R.id.seek_bar_speed);
 
 
 
@@ -74,7 +86,8 @@ public class SettingsDialog extends AppCompatDialogFragment {
     }
 
     public interface SettingsDialogListener {
-        void apply(float pitch, float speed);
+        void apply(int pitch, int speed);
+
     }
 
 

@@ -56,11 +56,12 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     Button btn_next;
     FloatingActionButton fab,night_mode;
     HashMap<String, String> map = new HashMap<String, String>();
+    HashMap<String,String>map1=new HashMap<String, String>();
     Uri filePath;
+    float this_pitch, this_speed;
+    int pitch_progress, speed_progress;
     int read_line=0;
-    String[]stringParser;
-
-
+    String[] stringParser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +80,10 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         stop = false;
         fullscr = false;
         nightmode_state = false;
+        this_pitch = this_speed = 0.5f;
 
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
+        map1.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"newUniqueID");
 
         //****************open the file and initialize tts**********************************************
         //book1.fromAsset("book1.pdf").load();
@@ -92,12 +95,11 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         Bundle bundle = getIntent().getExtras();
         filePath = Uri.parse(bundle.getString("filePath")); //gving a filepath
 
-
-
         final File file=new File(filePath.getPath());
         book1.fromFile(file)
-                .enableDoubletap(true)
-                .enableSwipe(true)
+
+            .enableDoubletap(true)
+                .enableSwipe(false)
                 .scrollHandle(new DefaultScrollHandle(this, true))
 
 
@@ -111,7 +113,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 })
                 .load(); // put the pdf in the pdf view
 
-        Toast.makeText(Book1.this, ""+filePath.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(Book1.this, ""+filePath.toString(), Toast.LENGTH_LONG).show();
         initialise_text_to_speech();
 
         //*****************handle the hiding toolbar button****************************************
@@ -150,7 +152,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 {
                     //book1.setNightMode(true);
                     nightmode_state=true;
-                    
                 }
                 else
                 {
@@ -211,6 +212,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
                 } else {
                     int entered_page = Integer.parseInt(edit_goto.getText().toString());
+
                     if (speak) {
 
                         fab.setImageResource(R.drawable.ic_pause);
@@ -222,7 +224,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                         fab.setImageResource(R.drawable.ic_speaker_phone_black_24dp);
                         stop = false;
                         speak = true;
-                        //Toast.makeText(getApplicationContext(),"read_word: "+read_line,Toast.LENGTH_LONG).show();
+
                     }
                 }
             }
@@ -256,16 +258,27 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     }
 
     public void openSettingsDialog() {
-        SettingsDialog settingsDialog = new SettingsDialog();
+        SettingsDialog settingsDialog = new SettingsDialog(pitch_progress, speed_progress);
         settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
 
     }
 
 
     @Override
-    public void apply(float pitch, float speed) {
-        text_to_speech.setPitch(pitch);
-        text_to_speech.setSpeechRate(speed);
+    public void apply(int pitch, int speed) {
+        pitch_progress = pitch;
+        speed_progress = speed;
+
+        //convert progrees into actual value
+        this_pitch = (float) pitch_progress / 50;
+        if (this_pitch < 0.1) this_pitch = 0.1f;
+        this_speed = (float) speed_progress / 50;
+        if (this_speed < 0.1) this_speed = 0.1f;
+
+        text_to_speech.setPitch(this_pitch);
+        text_to_speech.setSpeechRate(this_speed);
+
+
     }
 
     private void initialise_text_to_speech() {
@@ -291,19 +304,39 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                             }
 
                             @Override
-                            public void onDone(String utteranceId) {
-                                runOnUiThread(new Runnable() {
+                            public void onDone(final String utteranceId) {
+                                if(read_line==stringParser.length) {
+                                    runOnUiThread(new Runnable() {
 
-                                    public void run() {
-                                        btn_next.performClick();
-                                        speak=true;
-                                        stop=false;
-                                        read_line=0;
-                                        Toast.makeText(getApplicationContext(),"read_word: "+read_line,Toast.LENGTH_LONG).show();
+                                        public void run() {
+                                            //Toast.makeText(getApplicationContext(), ""+utteranceId, Toast.LENGTH_LONG).show();
+                                            btn_next.performClick();
+                                            speak = true;
+                                            stop = false;
+                                            read_line = 0;
+                                            fab.performClick();
 
-                                        fab.performClick();
-                                    }
-                                });
+                                        }
+                                    });
+
+                                }
+                                else
+                                {
+                                    runOnUiThread(new Runnable() {
+
+                                        public void run() {
+                                            //Toast.makeText(getApplicationContext(), ""+utteranceId, Toast.LENGTH_LONG).show();
+                                            //btn_next.performClick();
+                                            speak = true;
+                                            stop = false;
+                                            read_line++;
+                                            fab.performClick();
+
+                                        }
+                                    });
+
+                                }
+
 
 
                             }
@@ -324,15 +357,17 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     {
         if(Build.VERSION.SDK_INT>=21)
         {
-            if(read_line==stringParser.length-1)
-                text_to_speech.speak(message,TextToSpeech.QUEUE_ADD,null,map.toString());
-
+            if(read_line==stringParser.length) {
+                text_to_speech.speak(message, TextToSpeech.QUEUE_ADD, null, map.toString());
+                //Toast.makeText(getApplicationContext(),"finished page",Toast.LENGTH_SHORT).show();
+            }
             else
-                text_to_speech.speak(message,TextToSpeech.QUEUE_ADD,null,null);
+                text_to_speech.speak(message,TextToSpeech.QUEUE_ADD,null,map.toString());
         }
     }
     public void read_pdf_file(int page_no) {
         try {
+
             File file=new File(filePath.toString());
             PdfReader pdfReader = new PdfReader(filePath.toString());
 
@@ -340,15 +375,13 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             //for(int i=page_no;i<=pdfReader.getNumberOfPages();i++) {
 
                     // access the resource protected by this lock
-            stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).split("\n");
-
-
-            for(int i=read_line;i<stringParser.length;i++) {
-                read_line=i;
-                speak(stringParser[i]);
-                //Toast.makeText(getApplicationContext(),"wordno"+i+": "+stringParser[i],Toast.LENGTH_LONG).show();
-            }
-
+                    stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).split("\n");
+                    //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
+                    if(read_line<stringParser.length)
+                    speak("" + stringParser[read_line]);
+                    else
+                        speak("");
+                    //read_line++;
 
 
             //}
@@ -363,11 +396,11 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         }
     }
 
-    /*@Override
+    @Override
     protected void onPause() {
         super.onPause();
         text_to_speech.stop();
-    }*/
+    }
 
     @Override
     protected void onDestroy() {
