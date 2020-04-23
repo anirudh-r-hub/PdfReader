@@ -1,8 +1,10 @@
 package com.example.pdfreader;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
@@ -62,6 +64,9 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     int pitch_progress, speed_progress;
     int read_line=0;
     String[] stringParser;
+    int selected_langage = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +82,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         btn_goto=(Button)findViewById(R.id.btn_goto);
 
         book1 = (PDFView) findViewById(R.id.book1); // creating a view which will display the pdf
-         fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         final FloatingActionButton full_screen = findViewById(R.id.fab_fullscreen);
         speak = true;
         stop = false;
@@ -100,7 +105,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         final File file=new File(filePath.getPath());
         book1.fromFile(file)
 
-            .enableDoubletap(true)
+                .enableDoubletap(true)
                 .enableSwipe(true)
                 .scrollHandle(new DefaultScrollHandle(this, true))
 
@@ -176,12 +181,10 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                     //change nightmode_state
                     nightmode_state = true;
                 } else {
-
                     book1.fromFile(file)
                             .enableDoubletap(true)
                             .scrollHandle(new DefaultScrollHandle(Book1.this, true))
                             .load(); // put the pdf in the pdf view
-
                     night_mode.setBackground(getResources().getDrawable(R.drawable.day_5_black_24dp,null));
                     //change nightmode_state
                     nightmode_state = false;
@@ -257,18 +260,111 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         return super.onCreateOptionsMenu(menu);
     }
 
+
+    //##################################### SETTINGS MENU ##################################################################
+    //##################################### SETTINGS MENU ##################################################################
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        final String[] listitems;
+
+
         switch (item.getItemId()) {
             case R.id.action_settings:
 
                 Toast.makeText(this, "Settings selected", Toast.LENGTH_LONG).show();
                 openSettingsDialog();
                 return true;
+
+            case R.id.action_language:
+
+                Toast.makeText(this, "Select Language", Toast.LENGTH_SHORT).show();
+                listitems = new String[]{"ENGLISH", "FRENCH","GERMAN","ITALIAN","ENGLISH (UK)","ENGLISH (CANADA)","FRENCH (CANADA)"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(Book1.this);
+                builder.setTitle("Select Language for Reader");
+                builder.setSingleChoiceItems(listitems, selected_langage, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selected_langage = which;
+                        selectedItemListener(listitems[which]);
+
+                    }
+                });
+
+                builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void selectedItemListener(String language) {
+        Toast.makeText(this, "Selected language: "+language, Toast.LENGTH_SHORT).show();
+
+        switch(language) {
+
+            case "ENGLISH":
+                Toast.makeText(this, "english selected", Toast.LENGTH_SHORT).show();
+                text_to_speech.setLanguage(Locale.ENGLISH);
+                break;
+
+            case "FRENCH":
+                Toast.makeText(this, "french selected", Toast.LENGTH_SHORT).show();
+
+                text_to_speech.setLanguage(Locale.FRENCH);
+                break;
+
+            case "GERMAN":
+                Toast.makeText(this, "german selected", Toast.LENGTH_SHORT).show();
+
+                text_to_speech.setLanguage(Locale.GERMAN);
+
+                break;
+
+            case "ITALIAN":
+                Toast.makeText(this, "italian selected", Toast.LENGTH_SHORT).show();
+
+                text_to_speech.setLanguage(Locale.ITALIAN);
+
+                break;
+
+            case "ENGLISH (UK)":
+                Toast.makeText(this, "English(UK) selected", Toast.LENGTH_SHORT).show();
+
+                text_to_speech.setLanguage(Locale.UK);
+
+                break;
+
+            case "ENGLISH (CANADA)":
+                Toast.makeText(this, "English (CANADA) selected", Toast.LENGTH_SHORT).show();
+
+                text_to_speech.setLanguage(Locale.CANADA);
+
+                break;
+
+            case "FRENCH (CANADA)":
+                Toast.makeText(this, "french (CANADA) selected", Toast.LENGTH_SHORT).show();
+
+                text_to_speech.setLanguage(Locale.CANADA_FRENCH);
+                break;
+
+
+
+        }
+
+    }
+
+    // ######################################## VOICE SETTINGS DIALOG ###################################################
+    // ######################################## VOICE SETTINGS DIALOG ###################################################
 
     public void openSettingsDialog() {
         SettingsDialog settingsDialog = new SettingsDialog(pitch_progress, speed_progress);
@@ -293,6 +389,9 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
 
     }
+
+    //################################ TEXT TO SPEECH FUNCTIONS ######################################################
+    //################################ TEXT TO SPEECH FUNCTIONS ######################################################
 
     private void initialise_text_to_speech() {
         text_to_speech=new TextToSpeech(Book1.this, new TextToSpeech.OnInitListener() {
@@ -366,6 +465,8 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             }
         });
     }
+
+    //************** speak *******************************************************************
     private void speak(String message)
     {
         if(Build.VERSION.SDK_INT>=21)
@@ -378,6 +479,8 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 text_to_speech.speak(message,TextToSpeech.QUEUE_ADD,null,map.toString());
         }
     }
+
+    //************** read one page of pdf *******************************************************************
     public void read_pdf_file(int page_no) {
         try {
 
@@ -388,15 +491,15 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
             //for(int i=page_no;i<=pdfReader.getNumberOfPages();i++) {
 
-                    // access the resource protected by this lock
+            // access the resource protected by this lock
 
-                    stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).split("\n");
-                    //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
-                    if(read_line<stringParser.length)
-                    speak("" + stringParser[read_line]);
-                    else
-                        speak("");
-                    //read_line++;
+            stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).split("\n");
+            //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
+            if(read_line<stringParser.length)
+                speak("" + stringParser[read_line]);
+            else
+                speak("");
+            //read_line++;
 
 
             //}
@@ -412,7 +515,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     }
 
 
-
+    //******************* destroy tts object **************************************
     @Override
     protected void onDestroy() {
 
@@ -423,7 +526,8 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         super.onDestroy();
     }
 
-    //#########################################################################################################3
+    //################################### PAGE NAVIGATION ##########################################################
+    //################################### PAGE NAVIGATION ##########################################################
 
     public void gotopage(View view) {
         if(edit_goto.getText().toString().equals(""))
