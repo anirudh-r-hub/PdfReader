@@ -2,6 +2,7 @@ package com.example.pdfreader;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,9 +13,12 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.os.FileUtils;
 import android.speech.RecognitionListener;
@@ -48,20 +52,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,1);
-      //          speechRecognizer.startListening(intent);
-            }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+        != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    1001);
+        }
 
-        });*/
-        //initialise_text_to_speech();
-        //initialise_speech_recognizer();
+
     }
 
     //##########################FILE PICKER BUTTON#################################################################3
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         //startActivityForResult(Intent.createChooser(filePicker_intent,"Choose PDF"), 1);
         new MaterialFilePicker()
                 .withActivity(this)
+                .withFilter(Pattern.compile(".*\\.pdf$"))
                 .withRootPath("/storage/")
                 .withRequestCode(1000)
                 .withHiddenFiles(true) // Show hidden files and folders
@@ -110,109 +111,22 @@ public class MainActivity extends AppCompatActivity {
     //#########################################################################################################3
 
 
-    /*private void initialise_text_to_speech() {
-        text_to_speech=new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if(text_to_speech.getEngines().size()==0)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode)
+        {
+            case 1001:{
+                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
                 {
-                    Toast.makeText(MainActivity.this,"There is no speech engine",
-                            Toast.LENGTH_LONG).show();
-                    finish();
+                    Toast.makeText(getApplicationContext(),"Permission granted",Toast.LENGTH_LONG).show();
                 }
                 else
                 {
-                    text_to_speech.setLanguage(Locale.US);
-
+                    finish();
                 }
-
+                return;
             }
-        });
-    }*/
-
-    /*private void initialise_speech_recognizer() {
-
-        if(SpeechRecognizer.isRecognitionAvailable(this))
-        {
-            speechRecognizer=SpeechRecognizer.createSpeechRecognizer(this);
-            speechRecognizer.setRecognitionListener(new RecognitionListener() {
-                @Override
-                public void onReadyForSpeech(Bundle params) {
-
-                }
-
-                @Override
-                public void onBeginningOfSpeech() {
-
-                }
-
-                @Override
-                public void onRmsChanged(float rmsdB) {
-
-                }
-
-                @Override
-                public void onBufferReceived(byte[] buffer) {
-
-                }
-
-                @Override
-                public void onEndOfSpeech() {
-
-                }
-
-                @Override
-                public void onError(int error) {
-
-                }
-
-                @Override
-                public void onResults(Bundle results)
-                {
-                    List<String> speech_results=results.getStringArrayList(
-                            SpeechRecognizer.RESULTS_RECOGNITION
-                    );
-                    process_result(speech_results.get(0));
-
-                }
-
-                @Override
-                public void onPartialResults(Bundle partialResults) {
-
-                }
-
-                @Override
-                public void onEvent(int eventType, Bundle params) {
-
-                }
-            });
         }
-    }*/
 
-    /*private void process_result(String command) {
-        command=command.toLowerCase();
-
-        if(command.equals("hello"))
-        {
-            speak("bye");
-
-        }
-        else if(command.equals("bye"))
-        {
-            speak("hello");
-        }
-        else
-            speak("Sorry cannot understand");
-
-    }*/
-
-    /*private void speak(String message)
-    {
-        if(Build.VERSION.SDK_INT>=21)
-        {
-            text_to_speech.speak(message,TextToSpeech.QUEUE_ADD,null,null);
-        }
-    }*/
-
-
+    }
 }

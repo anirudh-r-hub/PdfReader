@@ -272,10 +272,10 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 //btn_next.setEnabled(false);
 
                 read_line=0;
-                btn_next.setEnabled(false);
+                btn_next.setEnabled(true);
                 btn_next.setForeground(getResources().getDrawable(R.drawable.ic_navigate_next_black_24dp,null));
 
-                btn_prev.setEnabled(false);
+                btn_prev.setEnabled(true);
                 btn_prev.setForeground(getResources().getDrawable(R.drawable.ic_navigate_before_black_24dp,null));
                 btn_goto.setEnabled(true);
                 edit_goto.setEnabled(true);
@@ -536,7 +536,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
             // access the resource protected by this lock
 
-            stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).split("\n");
+            stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).replaceAll("\n"," ").split("\\.");
             //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
             if(read_line<stringParser.length)
                 speak("" + stringParser[read_line]);
