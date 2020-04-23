@@ -97,7 +97,7 @@
         android:layout_margin="16dp"
         android:backgroundTint="@android:color/white"
 
-        android:foreground="@drawable/ic_stop_black"
+        android:foreground="@drawable/ic_stop_black_disabled_24dp"
         android:foregroundGravity="center"
         />
 
