@@ -49,8 +49,7 @@ import java.util.zip.Inflater;
 
 
 public class MainActivity extends AppCompatActivity {
-    //private TextToSpeech text_to_speech;
-    //private SpeechRecognizer speechRecognizer;
+
     Intent filePicker_intent;
     DatabaseHelper recentdb;
     ListView listview_recentfiles;
