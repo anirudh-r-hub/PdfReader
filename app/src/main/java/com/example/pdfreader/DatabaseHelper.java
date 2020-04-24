@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 
@@ -17,7 +19,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table recent (ID INTEGER PRIMARY KEY AUTOINCREMENT, PATH TEXT)");
+        db.execSQL("create table recent_page (ID INTEGER PRIMARY KEY AUTOINCREMENT, PATH TEXT, PAGE INTEGER)");
+
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -25,24 +30,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertData() {
-        ContentValues contentValues;
+    public long addRecentPage(String path, int page) {
+
         SQLiteDatabase db = this.getWritableDatabase();
-
+        ContentValues contentValues;
         contentValues = new ContentValues();
-        contentValues.put("PATH", "/storage/abc.pdf");
-        db.insert("recent", null, contentValues);
+        contentValues.put("PATH", path);
+        contentValues.put("PAGE",page);
+        long res;
 
-        contentValues = new ContentValues();
-        contentValues.put("PATH", "/storage/def.pdf");
-        db.insert("recent", null, contentValues);
+        //check for already present
 
-        contentValues = new ContentValues();
-        contentValues.put("PATH", "/storage/ghi.pdf");
-        db.insert("recent", null, contentValues);
+        Cursor search = db.rawQuery("select * from recent_page where path = '"+path+"'",null);
 
+        if(!search.moveToNext()) {
+
+           res = db.insert("recent_page", null, contentValues);
+           db.close();
+            return res;
+        } else {
+            //update the page no.
+            String update_id = new Integer(search.getInt(0)).toString();
+
+            db.update("recent_page", contentValues, "ID = ?", new String[] {update_id});
+
+        }
+        db.close();
+        return -1;
 
     }
+
+    public int getRecentPage(String path) {
+        //check for already present
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor search = db.rawQuery("select * from recent_page where path = '"+path+"'",null);
+
+        if(search.moveToNext()) {
+            db.close();
+
+            return search.getInt(2);//recent page
+
+        }
+
+        db.close();
+
+        return 1;
+    }
+
 
     public long insertSingle(String path) {
         //check for duplicate
@@ -55,8 +91,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             contentValues = new ContentValues();
             contentValues.put("PATH", path);
             long res = db.insert("recent", null, contentValues);
+            db.close();
             return res;
         }
+        db.close();
         return -1;
 
     }
@@ -65,19 +103,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         Cursor res = db.rawQuery("select * from recent where path = '"+path+"'",null);
-        System.err.println("res status : "+res.toString());
+        //System.err.println("res status : "+res.toString());
         if(res.moveToNext()){
-            System.err.println("res path: "+res.getString(1)+ " index: "+res.getString(0));
+            //System.err.println("res path: "+res.getString(1)+ " index: "+res.getString(0));
 
         }
         return res;
     }
 
-    public Cursor getAllData() {
+    public ArrayList<String> getAllData() {
         SQLiteDatabase db = this.getWritableDatabase();
 
+        ArrayList<String> resultset = new ArrayList<>();
+
         Cursor res = db.rawQuery("select * from recent",null);
-        return res;
+
+        while(res.moveToNext()) {
+
+            resultset.add(res.getString(1));
+
+        }
+        db.close();
+        return resultset;
 
     }
 
@@ -86,8 +133,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         int rows_deleted = db.delete("recent", null, null);
+        db.close();
         return rows_deleted;
     }
+
+
 
 
 }
