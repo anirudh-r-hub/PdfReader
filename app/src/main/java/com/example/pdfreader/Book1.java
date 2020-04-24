@@ -5,22 +5,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
-import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -29,21 +22,15 @@ import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
-import com.github.barteksc.pdfviewer.listener.OnTapListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
-import com.github.barteksc.pdfviewer.source.DocumentSource;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfPage;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsDialogListener {
 
@@ -299,7 +286,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+        inflater.inflate(R.menu.menu_settings, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -527,9 +514,8 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     public void read_pdf_file(int page_no) {
         try {
 
-            File file=new File(filePath.toString());
+            File file = new File(filePath.toString());
             PdfReader pdfReader = new PdfReader(filePath.toString());
-
 
 
             //for(int i=page_no;i<=pdfReader.getNumberOfPages();i++) {
@@ -546,7 +532,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
 
             //}
-            pdfReader.close();
+            //pdfReader.close();
             //outputTextView.setText(stringParser);
 
 

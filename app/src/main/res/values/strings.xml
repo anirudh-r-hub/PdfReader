@@ -3,4 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="action_language">Select Language</string>
+    <string name="aboutus">About Us</string>
+    <string name="exit">Exit</string>
+    <string name="clear_recent">Clear recent files</string>
 </resources>
