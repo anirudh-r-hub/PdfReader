@@ -218,6 +218,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                         btn_prev.setForeground(getResources().getDrawable(R.drawable.ic_navigate_before_disabled,null));
                         btn_goto.setEnabled(false);
                         edit_goto.setEnabled(false);
+                        //book1.setSwipeEnabled(false);
                         book1.setSwipeEnabled(false);
                     }
 
@@ -274,6 +275,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 btn_prev.setForeground(getResources().getDrawable(R.drawable.ic_navigate_before_black_24dp,null));
                 btn_goto.setEnabled(true);
                 edit_goto.setEnabled(true);
+                //book1.setSwipeEnabled(true);
                 book1.setSwipeEnabled(true);
 
                 stop_session.setEnabled(false);

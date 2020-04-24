@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.zip.Inflater;
+import java.io.File;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -109,13 +110,23 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(MainActivity.this, Book1.class);
                 i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                //Create the bundle
-                Bundle bundle = new Bundle();
-                bundle.putString("filePath",listoffiles.get(position)); // putting the file path in bundle
-                i.putExtras(bundle);
 
-                startActivity(i);
+                File file = new File(listoffiles.get(position));
 
+                if(file.exists())
+                {
+                    Toast.makeText(MainActivity.this, "Opening "+file.getName()+"...", Toast.LENGTH_SHORT).show();
+                    //Create the bundle
+                    Bundle bundle = new Bundle();
+                    bundle.putString("filePath",listoffiles.get(position)); // putting the file path in bundle
+                    i.putExtras(bundle);
+
+                    startActivity(i);
+
+                } else {
+
+                    Toast.makeText(MainActivity.this, "File not found!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
