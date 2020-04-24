@@ -1,4 +1,4 @@
-package com.vaavdevelopers.pdfreader;
+package com.vaavdevelopers.pdfreadaloud;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;

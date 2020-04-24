@@ -1,4 +1,4 @@
-package com.vaavdevelopers.pdfreader;
+package com.vaavdevelopers.pdfreadaloud;
 
 import androidx.appcompat.app.AppCompatActivity;
 
