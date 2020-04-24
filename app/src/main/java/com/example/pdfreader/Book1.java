@@ -566,7 +566,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             //Toast.makeText(this,stringParser,Toast.LENGTH_LONG).show();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();   
         }
     }
 
