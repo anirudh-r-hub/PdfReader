@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recentdb = new DatabaseHelper(this);
         listview_recentfiles = (ListView) findViewById(R.id.recentfiles);
         l1 = (LinearLayout) findViewById(R.id.select_files);
 
@@ -125,15 +124,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void fetchRecent() {
         listoffiles.clear();
+        recentdb = new DatabaseHelper(this);
 
-        Cursor res = recentdb.getAllData();
-        if(res.getCount()!= 0)
+        listoffiles = recentdb.getAllData();
+        if(listoffiles.size()!= 0)
         {
             listview_recentfiles.setVisibility(View.VISIBLE);
 
-            while(res.moveToNext()) {
+            /*while(res.moveToNext()) {
                 listoffiles.add(res.getString(1));
-            }
+            }*/
 
             ArrayAdapter arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listoffiles);
 
@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
             listview_recentfiles.setVisibility(View.GONE);
         }
 
+        recentdb.close();
 
     }
 
@@ -169,10 +170,11 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_clear_recent:
-
+                recentdb = new DatabaseHelper(this);
                 int rows_deleted = recentdb.clearAllData();
                 Toast.makeText(this, "All "+rows_deleted+" entries removed!", Toast.LENGTH_SHORT).show();
                 fetchRecent();
+                recentdb.close();
                 return true;
 
         }
@@ -212,8 +214,10 @@ public class MainActivity extends AppCompatActivity {
             System.err.println(filePath);
 
             //***********insert into database of recent files
+            recentdb = new DatabaseHelper(this);
             recentdb.insertSingle(filePath);
             fetchRecent();
+            recentdb.close();
             //Log.d("Insert result", "res: "+res);
 
             //Log.v("URI",filePath.getPath());

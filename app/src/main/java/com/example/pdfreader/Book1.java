@@ -48,11 +48,13 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     HashMap<String, String> map = new HashMap<String, String>();
     HashMap<String,String>map1=new HashMap<String, String>();
     Uri filePath;
+    String filePath_str;
     float this_pitch, this_speed;
     int pitch_progress, speed_progress;
     int read_line=0;
     String[] stringParser;
     int selected_langage = 0;
+    DatabaseHelper recentdb;
 
 
     @Override
@@ -91,15 +93,19 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
         Bundle bundle = getIntent().getExtras();
         filePath = Uri.parse(bundle.getString("filePath")); //gving a filepath
+        filePath_str = bundle.getString("filePath");
+
+        recentdb = new DatabaseHelper(this);
+        int recent_page = recentdb.getRecentPage(filePath_str);
+        recentdb.close();
 
         final File file=new File(filePath.getPath());
         book1.fromFile(file)
 
                 .enableDoubletap(true)
                 .enableSwipe(true)
+                .defaultPage(recent_page - 1)
                 .scrollHandle(new DefaultScrollHandle(this, true))
-
-
 
 
                 .onPageChange(new OnPageChangeListener() {
@@ -109,6 +115,8 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                     }
                 })
                 .load(); // put the pdf in the pdf view
+
+
 
         //Toast.makeText(Book1.this, ""+filePath.toString(), Toast.LENGTH_LONG).show();
         initialise_text_to_speech();
@@ -282,6 +290,23 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     }
 //##############################################################################################################3
 
+    // add recent page of the book
+    @Override
+    public void onBackPressed() {
+
+        int current_page = Integer.parseInt(edit_goto.getText().toString());
+
+        System.err.println("finalpath" + filePath_str+" current page : "+current_page);
+
+        recentdb = new DatabaseHelper(this);
+
+        recentdb.addRecentPage(filePath_str, current_page);
+
+        recentdb.close();
+        finish();
+
+        //super.onBackPressed();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
