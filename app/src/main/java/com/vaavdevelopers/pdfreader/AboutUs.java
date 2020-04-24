@@ -1,15 +1,10 @@
-package com.example.pdfreader;
+package com.vaavdevelopers.pdfreader;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.Calendar;
 
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
@@ -30,9 +25,11 @@ public class AboutUs extends AppCompatActivity {
                 .setImage(R.drawable.app_thumbnail)
                 .addItem(new Element().setTitle("Version 1.0"))
                 .addGroup("Connect with us")
-                .addEmail("abc@gmail.com")
-                .addGitHub("github link")
-                .addYoutube("youtube link")
+                .addEmail("vaav.developers@gmail.com")
+                .addGitHub("anirudh-r-hub/PdfReader")
+                .addFacebook("https://www.facebook.com/PDF-Read-Aloud-101266741574214")
+                .addTwitter("https://twitter.com/AloudPDF")
+                .addInstagram("vaav_developers/")
                 .addItem(createCopyright())
                 .create();
         setContentView(aboutPage);
@@ -42,7 +39,7 @@ public class AboutUs extends AppCompatActivity {
     private Element createCopyright() {
 
         Element copyright = new Element();
-        String copyrightString = String.format("Copyright 2020 by Star Android developers");
+        String copyrightString = String.format("Copyright 2020 by Vaav Android developers");
 
         copyright.setTitle(copyrightString);
         copyright.setIconDrawable(R.drawable.about_icon_email);

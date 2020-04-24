@@ -1,4 +1,4 @@
-package com.example.pdfreader;
+package com.vaavdevelopers.pdfreader;
 
 public class ScreenItem {
 

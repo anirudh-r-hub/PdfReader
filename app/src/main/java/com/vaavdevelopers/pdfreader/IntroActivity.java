@@ -1,4 +1,4 @@
-package com.example.pdfreader;
+package com.vaavdevelopers.pdfreader;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 public class IntroActivity extends AppCompatActivity {
@@ -42,8 +41,8 @@ public class IntroActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
         // when this activity is about to be launch we need to check if its openened before or not
 
         if (restorePrefData()) {
@@ -75,7 +74,7 @@ public class IntroActivity extends AppCompatActivity {
         mList.add(new ScreenItem("Good Sleep","\"The best bridge between despair and hope is a good night’s sleep.\"" +
                 "~ E. Joseph Cossman",R.drawable.sleep));
         mList.add(new ScreenItem("Good Knowledge","\"A reader lives a thousand lives before he dies . . . The man who never reads lives only one” – George R.R. Martin",R.drawable.knowledge));
-        mList.add(new ScreenItem("Listening","Lets Listen, what you have got!!!",R.drawable.app_icon));
+        mList.add(new ScreenItem("Listening","Let's hear what you have to say!!!",R.drawable.app_icon));
         // setup viewpager
         screenPager =findViewById(R.id.screen_viewpager);
         introViewPagerAdapter = new IntroViewPagerAdapter(this,mList);
