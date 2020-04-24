@@ -67,8 +67,9 @@ public class MainActivity extends AppCompatActivity {
         listview_recentfiles = (ListView) findViewById(R.id.recentfiles);
         l1 = (LinearLayout) findViewById(R.id.select_files);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        // Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         //************* permission for storage ***************************
 
