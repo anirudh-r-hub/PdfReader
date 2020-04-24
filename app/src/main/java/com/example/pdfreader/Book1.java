@@ -276,7 +276,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 btn_goto.setEnabled(true);
                 edit_goto.setEnabled(true);
                 //book1.setSwipeEnabled(true);
-                book1.setSwipeEnabled(true);
+                book1.setSwipeEnabled(false);
 
                 stop_session.setEnabled(false);
                 stop_session.setForeground(getResources().getDrawable(R.drawable.ic_stop_black_disabled_24dp,null));
