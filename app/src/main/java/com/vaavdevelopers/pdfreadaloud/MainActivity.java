@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
         l1 = (LinearLayout) findViewById(R.id.select_files);
 
 
-        // Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
         //************* permission for storage ***************************
 
@@ -69,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
         l1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // filePicker_intent = new Intent(Intent.ACTION_GET_CONTENT);
-                //filePicker_intent.setType("application/pdf");
-                //startActivityForResult(Intent.createChooser(filePicker_intent,"Choose PDF"), 1);
                 new MaterialFilePicker()
                         .withActivity(MainActivity.this)
                         .withFilter(Pattern.compile(".*\\.pdf$"))
@@ -84,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         //*******************List view code****************************
-        //recentdb.insertData();
 
         fetchRecent();
 
@@ -124,9 +118,6 @@ public class MainActivity extends AppCompatActivity {
         {
             listview_recentfiles.setVisibility(View.VISIBLE);
 
-            /*while(res.moveToNext()) {
-                listoffiles.add(res.getString(1));
-            }*/
 
             ArrayAdapter arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listoffiles);
 
@@ -165,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_clear_recent:
                 recentdb = new DatabaseHelper(this);
                 int rows_deleted = recentdb.clearAllData();
-                Toast.makeText(this, "All "+rows_deleted+" entries removed!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "All entries removed!", Toast.LENGTH_SHORT).show();
                 fetchRecent();
                 recentdb.close();
                 return true;
@@ -180,18 +171,7 @@ public class MainActivity extends AppCompatActivity {
     /*
     This function will create a pdf picker.
     * */
-    /*public void filePicker_btn(View view) {
-       // filePicker_intent = new Intent(Intent.ACTION_GET_CONTENT);
-        //filePicker_intent.setType("application/pdf");
-        //startActivityForResult(Intent.createChooser(filePicker_intent,"Choose PDF"), 1);
-        new MaterialFilePicker()
-                .withActivity(this)
-                .withFilter(Pattern.compile(".*\\.pdf$"))
-                .withRootPath("/storage/")
-                .withRequestCode(1000)
-                .withHiddenFiles(true) // Show hidden files and folders
-                .start();
-    }
+
     /*
     This function will process the result returned by the startActivityforResult function
      */

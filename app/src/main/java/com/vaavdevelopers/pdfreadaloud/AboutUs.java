@@ -14,7 +14,7 @@ public class AboutUs extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_about_us);
+
         String description1 = "This is an application which will read aloud any PDF from your device with Play-Pause-Resume facility." +
                 "You can also select options such as language, pitch and speed of the voice. " +
                 "If you like this app, please share it with your friends.";

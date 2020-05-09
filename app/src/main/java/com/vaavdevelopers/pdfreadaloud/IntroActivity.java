@@ -41,8 +41,6 @@ public class IntroActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
         // when this activity is about to be launch we need to check if its openened before or not
 
         if (restorePrefData()) {

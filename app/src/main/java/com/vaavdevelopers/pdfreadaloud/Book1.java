@@ -8,8 +8,10 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.speech.tts.Voice;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
+import com.github.barteksc.pdfviewer.util.Constants;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
@@ -50,7 +53,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     Uri filePath;
     String filePath_str;
     float this_pitch, this_speed;
-    int pitch_progress, speed_progress;
+    int pitch_progress=50, speed_progress=50;
     int read_line=0;
     String[] stringParser;
     int selected_langage = 0;
@@ -62,7 +65,9 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book1);
 
-        //night_mode = (Button)findViewById(R.id.btn_nightmode);
+
+        //Constants.Pinch.MINIMUM_ZOOM = 1;
+        //Constants.Pinch.MAXIMUM_ZOOM = 1;
         text_totalpages = (TextView)findViewById(R.id.text_noofpages);
         stop_session=findViewById(R.id.stop_session);
         edit_goto = (EditText) findViewById(R.id.edit_goto);
@@ -81,11 +86,12 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         fullscr = false;
         this_pitch = this_speed = 0.5f;
 
+
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
         map1.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"newUniqueID");
 
         //****************open the file and initialize tts**********************************************
-        //book1.fromAsset("book1.pdf").load();
+
 
         //Get the bundle
 
@@ -101,7 +107,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
         final File file=new File(filePath.getPath());
         book1.fromFile(file)
-
                 .enableDoubletap(true)
                 .enableSwipe(true)
                 .defaultPage(recent_page - 1)
@@ -115,7 +120,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                     }
                 })
                 .load(); // put the pdf in the pdf view
-
 
 
         //Toast.makeText(Book1.this, ""+filePath.toString(), Toast.LENGTH_LONG).show();
@@ -140,7 +144,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                     //show views
                     l1.setVisibility(LinearLayout.VISIBLE);
                     //change icon
-                    //full_screen.setImageResource(R.drawable.ic_fullscreen_black_24dp);
                     full_screen.setForeground(getResources().getDrawable(R.drawable.ic_fullscreen_black_24dp,null));
                     //change fullscr status
                     fullscr = false;
@@ -168,33 +171,12 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         text_totalpages.setText("/ "+number_of_pages);
 
 
-        //*****************************handle the night mode***************************************
-        /*night_mode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!nightmode_state) {
-                    //set night mode
-                    //change icon
-                    night_mode.setBackground(getResources().getDrawable(R.drawable.ic_night_4_black_24dp,null));
-                    //change nightmode_state
-                    nightmode_state = true;
-                } else {
-                    book1.fromFile(file)
-                            .enableDoubletap(true)
-                            .scrollHandle(new DefaultScrollHandle(Book1.this, true))
-                            .load(); // put the pdf in the pdf view
-                    night_mode.setBackground(getResources().getDrawable(R.drawable.day_5_black_24dp,null));
-                    //change nightmode_state
-                    nightmode_state = false;
-                }
-            }
-        });*/
 
         //*******************************speech to text button*************************************************
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                book1.setSwipeEnabled(false);
                 if (stop_session_enabled == false) {
 
                     stop_session.setEnabled(true);
@@ -220,10 +202,12 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                         edit_goto.setEnabled(false);
                         //book1.setSwipeEnabled(false);
                         book1.setSwipeEnabled(false);
+
                     }
 
 
                 } else {
+
                     if (edit_goto.getText().toString().equals("")) {
                         edit_goto.requestFocus();
 
@@ -236,12 +220,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                             read_pdf_file(entered_page);
                             speak = false;
                             stop = true;
-                            /*btn_next.setEnabled(false);
-                            btn_prev.setEnabled(false);
-                            btn_goto.setEnabled(false);
-                            edit_goto.setEnabled(false);
-                            book1.setSwipeEnabled(false);*/
-
 
                         } else if (stop) {
                             text_to_speech.stop();
@@ -263,10 +241,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 stop=true;
                 text_to_speech.stop();
                 fab.setImageResource(R.drawable.ic_speaker_phone_black_24dp);
-
-                //fab.performClick();
-                //btn_next.setEnabled(false);
-
                 read_line=0;
                 btn_next.setEnabled(true);
                 btn_next.setForeground(getResources().getDrawable(R.drawable.ic_navigate_next_black_24dp,null));
@@ -275,8 +249,9 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 btn_prev.setForeground(getResources().getDrawable(R.drawable.ic_navigate_before_black_24dp,null));
                 btn_goto.setEnabled(true);
                 edit_goto.setEnabled(true);
-                //book1.setSwipeEnabled(true);
-                book1.setSwipeEnabled(false);
+                book1.setSwipeEnabled(true);
+
+                //book1.setSwipeEnabled(false);
 
                 stop_session.setEnabled(false);
                 stop_session.setForeground(getResources().getDrawable(R.drawable.ic_stop_black_disabled_24dp,null));
@@ -307,7 +282,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         recentdb.close();
         finish();
 
-        //super.onBackPressed();
+
     }
 
     @Override
@@ -318,7 +293,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     }
 
 
-    //##################################### SETTINGS MENU ##################################################################
     //##################################### SETTINGS MENU ##################################################################
 
     @Override
@@ -421,14 +395,12 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     }
 
     // ######################################## VOICE SETTINGS DIALOG ###################################################
-    // ######################################## VOICE SETTINGS DIALOG ###################################################
 
     public void openSettingsDialog() {
         SettingsDialog settingsDialog = new SettingsDialog(pitch_progress, speed_progress);
         settingsDialog.show(getSupportFragmentManager(), "settings_dialog");
 
     }
-
 
     @Override
     public void apply(int pitch, int speed) {
@@ -447,7 +419,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
     }
 
-    //################################ TEXT TO SPEECH FUNCTIONS ######################################################
     //################################ TEXT TO SPEECH FUNCTIONS ######################################################
 
     private void initialise_text_to_speech() {
@@ -545,25 +516,14 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             PdfReader pdfReader = new PdfReader(filePath.toString());
 
 
-            //for(int i=page_no;i<=pdfReader.getNumberOfPages();i++) {
 
-            // access the resource protected by this lock
 
             stringParser = PdfTextExtractor.getTextFromPage(pdfReader, page_no).replaceAll("\n"," ").split("\\.");
-            //Toast.makeText(getApplicationContext(), stringParser, Toast.LENGTH_LONG).show();
             if(read_line<stringParser.length)
                 speak("" + stringParser[read_line]);
             else
                 speak("");
-            //read_line++;
 
-
-            //}
-            //pdfReader.close();
-            //outputTextView.setText(stringParser);
-
-
-            //Toast.makeText(this,stringParser,Toast.LENGTH_LONG).show();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -582,7 +542,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
         super.onDestroy();
     }
 
-    //################################### PAGE NAVIGATION ##########################################################
     //################################### PAGE NAVIGATION ##########################################################
 
     public void gotopage(View view) {
