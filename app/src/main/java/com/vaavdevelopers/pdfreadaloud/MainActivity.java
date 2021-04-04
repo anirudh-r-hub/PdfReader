@@ -69,11 +69,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new MaterialFilePicker()
                         .withActivity(MainActivity.this)
-                        .withFilter(Pattern.compile(".*\\.pdf$"))
+
                         .withRootPath("/storage/")
+
+                        .withFilter(Pattern.compile(".*\\.pdf$"))
+                        .withFilterDirectories(false)
                         .withRequestCode(1000)
+                        .withTitle("File Picker")
                         .withHiddenFiles(true) // Show hidden files and folders
                         .start();
+                //
             }
         });
 

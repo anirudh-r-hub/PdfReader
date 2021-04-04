@@ -24,7 +24,15 @@ android {
         }
     }
 }
-
+repositories {
+    jcenter()
+}
+android {
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+}
 dependencies {
 
     implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
@@ -36,7 +44,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.itextpdf:itextg:5.5.10'
-    implementation 'com.nbsp:library:1.8'
+    //implementation 'com.nbsp:library:1.8'
+    implementation 'com.nbsp:materialfilepicker:1.9.1'
     implementation 'com.android.support:design:29.0.0'
     implementation 'com.github.medyo:android-about-page:1.2.5'
     implementation 'com.android.support:support-v4:29.0.0'
