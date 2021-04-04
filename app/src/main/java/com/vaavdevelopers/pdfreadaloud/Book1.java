@@ -451,6 +451,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                                         public void run() {
                                             //Toast.makeText(getApplicationContext(), ""+utteranceId, Toast.LENGTH_LONG).show();
                                             btn_next.performClick();
+                                            speak("Please wait a moment, Going to the next page");
                                             speak = true;
                                             stop = false;
                                             read_line = 0;
