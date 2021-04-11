@@ -8,10 +8,8 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.speech.tts.Voice;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,7 +23,6 @@ import android.widget.Toast;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
-import com.github.barteksc.pdfviewer.util.Constants;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
@@ -35,7 +32,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsDialogListener {
+public class PDFViewActivity extends AppCompatActivity implements SettingsDialog.SettingsDialogListener {
 
     PDFView book1;
     private TextToSpeech text_to_speech;
@@ -122,7 +119,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                 .load(); // put the pdf in the pdf view
 
 
-        //Toast.makeText(Book1.this, ""+filePath.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(PDFViewActivity.this, ""+filePath.toString(), Toast.LENGTH_LONG).show();
         initialise_text_to_speech();
 
         //*****************handle the hiding toolbar button****************************************
@@ -311,7 +308,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
 
                 Toast.makeText(this, "Select Language", Toast.LENGTH_SHORT).show();
                 listitems = new String[]{"ENGLISH", "FRENCH","GERMAN","ITALIAN","ENGLISH (UK)","ENGLISH (CANADA)","FRENCH (CANADA)"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(Book1.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(PDFViewActivity.this);
                 builder.setTitle("Select Language for Reader");
                 builder.setSingleChoiceItems(listitems, selected_langage, new DialogInterface.OnClickListener() {
                     @Override
@@ -422,12 +419,12 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
     //################################ TEXT TO SPEECH FUNCTIONS ######################################################
 
     private void initialise_text_to_speech() {
-        text_to_speech=new TextToSpeech(Book1.this, new TextToSpeech.OnInitListener() {
+        text_to_speech=new TextToSpeech(PDFViewActivity.this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if(text_to_speech.getEngines().size()==0)
                 {
-                    Toast.makeText(Book1.this,"There is no speech engine",
+                    Toast.makeText(PDFViewActivity.this,"There is no speech engine",
                             Toast.LENGTH_LONG).show();
                     finish();
                 }
@@ -451,7 +448,6 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
                                         public void run() {
                                             //Toast.makeText(getApplicationContext(), ""+utteranceId, Toast.LENGTH_LONG).show();
                                             btn_next.performClick();
-                                            speak("Please wait a moment, Going to the next page");
                                             speak = true;
                                             stop = false;
                                             read_line = 0;
@@ -523,8 +519,7 @@ public class Book1 extends AppCompatActivity implements SettingsDialog.SettingsD
             if(read_line<stringParser.length)
                 speak("" + stringParser[read_line]);
             else
-                speak("");
-
+                speak("Please wait a moment, Going to the next page");
         }
         catch (Exception e) {
             e.printStackTrace();

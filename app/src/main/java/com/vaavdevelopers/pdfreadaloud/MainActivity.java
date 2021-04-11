@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         listview_recentfiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(MainActivity.this, Book1.class);
+                Intent i = new Intent(MainActivity.this, PDFViewActivity.class);
                 i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 File file = new File(listoffiles.get(position));
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             //Log.d("Insert result", "res: "+res);
 
             //Log.v("URI",filePath.getPath());
-            Intent i = new Intent(MainActivity.this, Book1.class);
+            Intent i = new Intent(MainActivity.this, PDFViewActivity.class);
             i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             //Create the bundle
             Bundle bundle = new Bundle();
